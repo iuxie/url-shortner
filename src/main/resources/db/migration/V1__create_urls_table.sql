@@ -1,0 +1,7 @@
+CREATE TABLE urls (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    original_url VARCHAR(2048) NOT NULL,
+    short_code VARCHAR(10) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL,
+    access_count BIGINT NOT NULL DEFAULT 0
+);

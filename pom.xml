@@ -12,7 +12,7 @@
 
 	<groupId>com.iuredev</groupId>
 	<artifactId>UrlShortner</artifactId>
-	<version>0.0.1-SNAPSHOT</version>0
+	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
 		<java.version>21</java.version>
