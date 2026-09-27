@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Encurtador de URL</title>
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>Encurtador de URL</h1>
+
+<form id="shortener-form" class="shortener-form">
+    <input
+            type="text"
+            id="original-url"
+            name="originalUrl"
+            placeholder="Cole a URL aqui (ex: https://exemplo.com)"
+            required
+    >
+    <button type="submit">Gerar URL</button>
+    <p id="error-message" class="error-message"></p>
+</form>
+
+<aside id="results-panel" class="results-panel" hidden>
+    <h2>URLs geradas</h2>
+    <table class="results-table">
+        <thead>
+        <tr>
+            <th>Link curto</th>
+            <th>Acessos</th>
+            <th>Criado em</th>
+        </tr>
+        </thead>
+        <tbody id="results-body"></tbody>
+    </table>
+</aside>
+
+<script th:inline="none">
+    const form = document.getElementById('shortener-form');
+    const urlInput = document.getElementById('original-url');
+    const errorMessage = document.getElementById('error-message');
+    const resultsPanel = document.getElementById('results-panel');
+    const resultsBody = document.getElementById('results-body');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorMessage.textContent = '';
+
+        const submitButton = form.querySelector('button');
+        submitButton.disabled = true;
+
+        try {
+            const createResponse = await fetch('/api/urls', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ originalUrl: urlInput.value })
+            });
+
+            if (!createResponse.ok) {
+                const problem = await createResponse.json();
+                throw new Error(problem.detail || 'Não foi possível gerar a URL.');
+            }
+
+            const created = await createResponse.json();
+
+            const statsResponse = await fetch(`/api/urls/${created.shortCode}/stats`);
+            const stats = await statsResponse.json();
+
+            addResultRow(stats);
+            urlInput.value = '';
+        } catch (err) {
+            errorMessage.textContent = err.message;
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+
+    const trackedRows = new Map(); // shortCode -> <td> de accessCount
+
+    function addResultRow(stats) {
+        const shortUrl = `${window.location.origin}/${stats.shortCode}`;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td><a href="${shortUrl}" target="_blank" rel="noopener">${shortUrl}</a></td>
+        <td class="access-count">${stats.accessCount}</td>
+        <td>${new Date(stats.createdAt).toLocaleString('pt-BR')}</td>
+    `;
+
+        resultsBody.prepend(row);
+        resultsPanel.hidden = false;
+
+        trackedRows.set(stats.shortCode, row.querySelector('.access-count'));
+    }
+
+    async function refreshAccessCounts() {
+        for (const [shortCode, cell] of trackedRows) {
+            try {
+                const res = await fetch(`/api/urls/${shortCode}/stats`);
+                if (!res.ok) continue;
+
+                const stats = await res.json();
+                cell.textContent = stats.accessCount;
+            } catch {
+                // silenciosamente ignora falha pontual, tenta de novo no próximo ciclo
+            }
+        }
+    }
+
+    setInterval(refreshAccessCounts, 5000);
+</script>
+
+</body>
+</html>

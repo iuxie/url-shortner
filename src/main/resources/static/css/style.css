@@ -1,0 +1,95 @@
+body {
+    background-color: #1F487E;
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    color: #FFFFFF;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.shortener-form {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.shortener-form input[type="text"] {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+}
+
+.shortener-form button {
+    background-color: #09A129;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: filter 0.15s ease-in-out;
+}
+
+.shortener-form button:hover {
+    filter: brightness(1.1);
+}
+
+.shortener-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #FFD5D5;
+    font-size: 0.9rem;
+    min-height: 1.2rem;
+}
+
+.results-panel {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    background-color: #FFFFFF;
+    color: #1F1F1F;
+    border-radius: 8px;
+    padding: 1rem;
+    max-width: 420px;
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.results-panel[hidden] {
+    display: none;
+}
+
+.results-panel h2 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.results-table {
+    width: 100%;
+    font-size: 0.8rem;
+}
+
+.results-table th,
+.results-table td {
+    text-align: left;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid #E0E0E0;
+    word-break: break-word;
+}
+
+.results-table a {
+    color: #1F487E;
+}
