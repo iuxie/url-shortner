@@ -20,4 +20,5 @@ public interface UrlMapper {
     UrlResponseDTO toResponseDTO(UrlModel model);
 
     UrlStatsResponseDTO toStatsResponseDTO(UrlModel model);
+
 }
